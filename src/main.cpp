@@ -415,8 +415,11 @@ static void openRoomLevel(std::string const& room, std::string const& levelName)
     }
 
     // keep whatever the player was working on
-    if (auto editor = LevelEditorLayer::get()) editor->saveLevel();
-
+    if (auto editor = LevelEditorLayer::get()) {
+        if (auto pause = EditorPauseLayer::create(editor)) {
+        pause->saveLevel();
+        }
+    }
     GJGameLevel* target = nullptr;
     for (auto lvl : CCArrayExt<GJGameLevel*>(manager->m_localLevels)) {
         if (std::string(lvl->m_levelName) == levelName) {
@@ -586,7 +589,11 @@ protected:
         ++S.joinGen; // ignore any join still in progress
         resetSync();
         S.room.clear();
-        // stop rejoining this room automatically next time the editor opens
+        // stop rejoining this room automatically nexif (auto editor = LevelEditorLayer::get()) {
+    if (auto pause = EditorPauseLayer::create(editor)) {
+        pause->saveLevel();
+    }
+}t time the editor opens
         Mod::get()->setSavedValue<std::string>("room-code", "");
         Notification::create("FreeCollab: left the room", NotificationIcon::Info)->show();
         this->onClose(nullptr);
